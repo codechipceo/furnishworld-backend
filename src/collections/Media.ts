@@ -1,21 +1,28 @@
-import type { CollectionConfig } from 'payload'
-
-import {
-  FixedToolbarFeature,
-  InlineToolbarFeature,
-  lexicalEditor,
-} from '@payloadcms/richtext-lexical'
-import path from 'path'
-import { fileURLToPath } from 'url'
-
 import { anyone } from '../access/anyone'
 import { authenticated } from '../access/authenticated'
+import { gcsStorage } from '@payloadcms/storage-gcs'
 
-const filename = fileURLToPath(import.meta.url)
-const dirname = path.dirname(filename)
+// const filename = fileURLToPath(import.meta.url)
+// const dirname = path.dirname(filename)
+const storage = gcsStorage({
+  enabled: process.env.GCS_BUCKET ? true : false, // Conditionally enable if GCS_BUCKET env var is set
+  collections: {
+    media: true,
+  },
 
-export const Media: CollectionConfig = {
+  bucket: process.env.GCS_BUCKET || '', // Your GCS bucket name
+  options: {
+    credentials: JSON.parse(process.env.GCS_CREDENTIALS || '{}'), // Your service account key JSON
+    projectId: process.env.GCS_PROJECT_ID, // Your Google Cloud Project ID
+    // apiEndpoint: 'https://www.googleapis.com', // Optional: for custom endpoints
+  },
+  // acl: 'publicRead', // Optional: Set public access for uploaded files (be careful with this!)
+  // clientUploads: true, // Set to true for direct client-side uploads (important for Vercel/small server limits)
+})
+
+export const Media = {
   slug: 'media',
+
   access: {
     create: authenticated,
     delete: authenticated,
@@ -26,55 +33,15 @@ export const Media: CollectionConfig = {
     {
       name: 'alt',
       type: 'text',
-      //required: true,
-    },
-    {
-      name: 'caption',
-      type: 'richText',
-      editor: lexicalEditor({
-        features: ({ rootFeatures }) => {
-          return [...rootFeatures, FixedToolbarFeature(), InlineToolbarFeature()]
-        },
-      }),
     },
   ],
   upload: {
-    // Upload to the public/media directory in Next.js making them publicly accessible even outside of Payload
-    staticDir: path.resolve(dirname, '../../public/media'),
-    adminThumbnail: 'thumbnail',
+    // When using @payloadcms/storage-gcs, you no longer need staticDir
+    // as files are uploaded directly to Google Cloud Storage.
+    staticDir: undefined,
+    
+    disableLocalStorage: true,
     focalPoint: true,
-    imageSizes: [
-      {
-        name: 'thumbnail',
-        width: 300,
-      },
-      {
-        name: 'square',
-        width: 500,
-        height: 500,
-      },
-      {
-        name: 'small',
-        width: 600,
-      },
-      {
-        name: 'medium',
-        width: 900,
-      },
-      {
-        name: 'large',
-        width: 1400,
-      },
-      {
-        name: 'xlarge',
-        width: 1920,
-      },
-      {
-        name: 'og',
-        width: 1200,
-        height: 630,
-        crop: 'center',
-      },
-    ],
+    mimeTypes: ['image/*', 'video/*', 'application/pdf'], // Example: allow images, videos, and PDFs
   },
 }

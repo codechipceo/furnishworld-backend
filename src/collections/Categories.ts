@@ -17,7 +17,18 @@ export const Categories: CollectionConfig = {
   },
   fields: [
     {
+      name: 'categoryImage',
+      type: 'upload',
+      relationTo: 'media',
+      required: true,
+    },
+    {
       name: 'title',
+      type: 'text',
+      required: true,
+    },
+    {
+      name: 'description',
       type: 'text',
       required: true,
     },
