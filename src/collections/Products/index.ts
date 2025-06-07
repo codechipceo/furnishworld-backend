@@ -1,20 +1,5 @@
 import { CollectionConfig } from 'payload'
 
-const serialiseProduct = (product) => {
-  const { name, description, gallery, id, shortDescription, variants } = product
-  return {
-    url: product.productImage.url,
-    imageUrl1: product.productImage.url,
-    imageUrl2: product.productImage.url,
-    title: name,
-    price: variants[0].price,
-    description,
-    gallery,
-    id,
-    shortDescription,
-  }
-}
-
 export const Products: CollectionConfig = {
   slug: 'products',
   admin: {
@@ -116,7 +101,7 @@ export const Products: CollectionConfig = {
         beforeValidate: [
           ({ data }) => {
             if (data?.variants) {
-              data.variants.forEach((variant) => {
+              data.variants.forEach((variant: any) => {
                 const variantParts = []
                 if (variant.color?.name) {
                   variantParts.push(variant.color.name)

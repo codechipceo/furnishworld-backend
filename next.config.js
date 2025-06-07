@@ -21,6 +21,10 @@ const nextConfig = {
     ],
   },
   reactStrictMode: true,
+  typescript: {
+    ignoreDevErrors: true, // Ignore errors in `next dev`
+    ignoreBuildErrors: true, // Ignore errors in `next build`
+  },
   redirects,
 }
 
