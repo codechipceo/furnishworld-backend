@@ -3,7 +3,7 @@ FROM node:18-alpine AS deps
 WORKDIR /app
 
 COPY package.json package-lock.json ./
-RUN npm ci --force
+RUN npm install --legacy-peer-deps
 
 # 2. Build assets (Next.js + Payload)
 FROM node:18-alpine AS builder
