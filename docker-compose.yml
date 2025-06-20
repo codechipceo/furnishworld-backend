@@ -55,12 +55,7 @@ services:
       GCS_PROJECT_ID: "${GCS_PROJECT_ID}"
       GCS_CREDENTIALS_ENCRYPT: "${GCS_CREDENTIALS_ENCRYPT}"
 
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.payload.rule=Host(`admin.furnishworld.in`)  # replace with your real domain
-      - traefik.http.routers.payload.entrypoints=http
-      - traefik.http.services.payload.loadbalancer.server.port=3000
-      - coolify.managed=true
+    
 
 networks:
   coolify:
