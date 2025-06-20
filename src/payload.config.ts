@@ -94,13 +94,17 @@ export default buildConfig({
           disablePayloadAccessControl: true,
           generateFileURL: (doc) => {
             return `https://storage.googleapis.com/furnishworld/products/${doc.filename}`
-          }
+          },
         },
       },
 
       bucket: process.env.GCS_BUCKET || '', // Your GCS bucket name
       options: {
-        credentials: JSON.parse(process.env.GCS_CREDENTIALS || '{}'), // Your service account key JSON
+        credentials: process.env.GCS_CREDENTIALS_ENCRYPT
+          ? JSON.parse(Buffer.from(process.env.GCS_CREDENTIALS_ENCRYPT, 'base64').toString('utf-8'))
+          : {},
+
+        // credentials: JSON.parse(process.env.GCS_CREDENTIALS_ENCRYPT || '{}'), // Your service account key JSON
         projectId: process.env.GCS_PROJECT_ID, // Your Google Cloud Project ID
         // apiEndpoint: 'https://www.googleapis.com', // Optional: for custom endpoints
       },
