@@ -1,38 +1,3 @@
-# # Use compose file format version 3.8
-# version: '3.8'
-
-# # Define services (your application containers)
-# services:
-#   # Your Payload CMS application service
-#   web:
-#     # Build the Docker image from the current directory (where Dockerfile is located)
-#     build:
-#       context: .
-#       dockerfile: Dockerfile
-#     # Map container port 3000 to host port 80 (or any other desired host port)
-#     # This makes your application accessible from outside the container
-#     ports:
-#       - "80:3000" # Host_Port:Container_Port
-#     # Restart the container if it stops for any reason
-#     restart: always
-#     # Environment variables for your application
-#     environment:
-#       # These variables will be loaded from your .env file
-#       DATABASE_URI: "${DATABASE_URI}"
-#       PAYLOAD_SECRET: "${PAYLOAD_SECRET}"
-#       NEXT_PUBLIC_SERVER_URL: "${NEXT_PUBLIC_SERVER_URL}"
-#       GCS_CREDENTIALS: "${GCS_CREDENTIALS}"
-#       GCS_BUCKET: "${GCS_BUCKET}"
-#       GCS_PROJECT_ID: "${GCS_PROJECT_ID}"
-#       GCS_CREDENTIALS_ENCRYPT: "${GCS_CREDENTIALS_ENCRYPT}"
-#       # Add other variables from your .env file as needed, e.g., S3 credentials
-#       # S3_ACCESS_KEY_ID: "${S3_ACCESS_KEY_ID}"
-#       # S3_SECRET_ACCESS_KEY: "${S3_SECRET_ACCESS_KEY}"
-#       # S3_BUCKET: "${S3_BUCKET}"
-#       # S3_REGION: "${S3_REGION}"
-#     # Volumes (optional, but useful for persistence or development)
-#     # - "./uploads:/app/uploads" # Uncomment if you want to persist uploads outside the container
-#     # - "./payload-config.ts:/app/payload.config.ts" # Example for config changes without rebuild (dev)
 
 version: '3.8'
 
@@ -55,7 +20,7 @@ services:
       GCS_PROJECT_ID: "${GCS_PROJECT_ID}"
       GCS_CREDENTIALS_ENCRYPT: "${GCS_CREDENTIALS_ENCRYPT}"
 
-    
+
 
 networks:
   coolify:
