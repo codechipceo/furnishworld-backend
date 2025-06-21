@@ -5,6 +5,7 @@ import path from 'path'
 import { buildConfig, PayloadRequest } from 'payload'
 import { fileURLToPath } from 'url'
 import dotenv from 'dotenv'
+import cors from 'cors' // add this at the top
 dotenv.config()
 
 import { Categories } from './collections/Categories'
@@ -82,7 +83,13 @@ export default buildConfig({
     Orders,
     Customers,
   ],
-  cors: [getServerSideURL(), 'http://localhost:5173'].filter(Boolean),
+  cors: [
+    getServerSideURL(),
+    'http://localhost:5173',
+    'https://furnishworld.in',
+    'https://www.furnishworld.in',
+    'http://qgog0ccwg8o0skw000448sgo.168.231.120.103.sslip.io',
+  ].filter(Boolean),
   globals: [Header, Footer],
   plugins: [
     ...plugins,
