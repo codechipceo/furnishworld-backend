@@ -16,6 +16,7 @@ const addCorsHeaders = (response: Response): Response => {
 }
 
 export const verifyPayment = async (req: any): Promise<Response> => {
+  console.log("Step 1 : PAYMENT VERIFICATION INIT")
   // Handle preflight OPTIONS request
   if (req.method === 'OPTIONS') {
     const response = new Response(null, { status: 200 })
@@ -37,6 +38,7 @@ export const verifyPayment = async (req: any): Promise<Response> => {
 
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature, order_id } = parsedBody || {};
 
+    console.log("Step 2 : PAYMENT VERIFICATION INIT", parsedBody)
     if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature || !order_id) {
       const missingParamsResponse = Response.json({ error: 'Missing required payment parameters' }, { status: 400 })
       return addCorsHeaders(missingParamsResponse)
@@ -57,8 +59,11 @@ export const verifyPayment = async (req: any): Promise<Response> => {
     // Step 2: Fetch payment details from Razorpay
     const payment = await razorpay.payments.fetch(razorpay_payment_id)
 
+    console.log("Step 3 : Payment Details Fetched", payment)
+
     // Step 3: Update order based on payment status
     if (payment.status === 'captured') {
+      console.log("Step 4 : Payment Captured")
       await req.payload.update({
         collection: 'orders',
         id: order_id,
@@ -72,6 +77,7 @@ export const verifyPayment = async (req: any): Promise<Response> => {
       })
 
       // Clear user's cart after successful payment
+      console.log("Step 5 : Clearing Cart")
       try {
         await req.payload.delete({
           collection: 'cart',
@@ -93,6 +99,7 @@ export const verifyPayment = async (req: any): Promise<Response> => {
       return addCorsHeaders(successResponse)
     } else {
       // Payment failed or pending
+      console.log("Step 6 : Payment Failed or Pending")
       await req.payload.update({
         collection: 'orders',
         id: order_id,
@@ -104,6 +111,7 @@ export const verifyPayment = async (req: any): Promise<Response> => {
         },
       })
 
+      console.log("Step 7 : Payment Failed or Pending")
       const failedResponse = Response.json({ error: `Payment ${payment.status}` }, { status: 400 })
       return addCorsHeaders(failedResponse)
     }

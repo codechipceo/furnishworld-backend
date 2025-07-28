@@ -15,6 +15,8 @@ const addCorsHeaders = (response: Response): Response => {
 }
 
 export const placeOrder = async (req: any): Promise<Response> => {
+
+  console.log("Step 1 : ORDER PLACEMENT INIT")
   // Handle preflight OPTIONS request
   if (req.method === 'OPTIONS') {
     const response = new Response(null, { status: 200 })
@@ -37,10 +39,7 @@ export const placeOrder = async (req: any): Promise<Response> => {
 
     const { items, total, shippingAddress } = body || {}
 
-    console.log('Parsed body:', body)
-    console.log('Items:', items)
-    console.log('Total:', total)
-    console.log('Shipping Address:', shippingAddress)
+    console.log("Step 2 : BODY PARSED ", body)
 
     if (!req.user) {
       const authErrorResponse = Response.json({ error: 'User not authenticated' }, { status: 401 })
@@ -63,6 +62,8 @@ export const placeOrder = async (req: any): Promise<Response> => {
       },
     })
 
+    console.log("Step 3 : Razorpay Order Created", razorpayOrder)
+
     // Step 2: Create order in database with Razorpay order ID
     const order = await req.payload.create({
       collection: 'orders',
@@ -77,6 +78,8 @@ export const placeOrder = async (req: any): Promise<Response> => {
       },
     })
 
+    console.log("Step 4 : Order Created", order)
+
     const response = Response.json({
       success: true,
       order,
@@ -85,7 +88,7 @@ export const placeOrder = async (req: any): Promise<Response> => {
     })
     return addCorsHeaders(response)
   } catch (error) {
-    console.error('Error placing order:', error)
+    console.error('Error placing order:', error )
     const errorResponse = Response.json({ error: 'Failed to place order' }, { status: 500 })
     return addCorsHeaders(errorResponse)
   }
