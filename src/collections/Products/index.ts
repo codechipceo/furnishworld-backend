@@ -76,11 +76,13 @@ export const Products: CollectionConfig = {
       name: 'colors',
       type: 'relationship',
       relationTo: 'colors',
+      required: true,
       hasMany: true,
     },
     {
       name: 'variants',
       type: 'array',
+      required: true,
       fields: [
         {
           name: 'size',

@@ -9,6 +9,7 @@ export const Customers: CollectionConfig = {
   },
   access: {
     read: ({ req: { user } }) => {
+      if (user?.role === 'admin') return true
       return { id: { equals: user?.id } }
     },
     update: ({ req: { user } }) => {

@@ -1,28 +1,29 @@
 // storage-adapter-import-placeholder
 import { mongooseAdapter } from '@payloadcms/db-mongodb'
 import { gcsStorage } from '@payloadcms/storage-gcs' // <--- Make sure this is the importimport sharp from 'sharp' // sharp-import
+import dotenv from 'dotenv'
 import path from 'path'
 import { buildConfig, PayloadRequest } from 'payload'
 import { fileURLToPath } from 'url'
-import dotenv from 'dotenv'
-import cors from 'cors' // add this at the top
 dotenv.config()
 
+import { defaultLexical } from '@/fields/defaultLexical'
+import { Cart } from './collections/Cart'
 import { Categories } from './collections/Categories'
+import { Colors, Sizes } from './collections/Colors'
+import { Customers } from './collections/Customers'
 import { Media } from './collections/Media'
+import { Orders } from './collections/Orders'
 import { Pages } from './collections/Pages'
 import { Posts } from './collections/Posts'
+import { Products } from './collections/Products'
 import { Users } from './collections/Users'
 import { Footer } from './Footer/config'
 import { Header } from './Header/config'
-import { Colors, Sizes } from './collections/Colors'
-import { Products } from './collections/Products'
-import { Cart } from './collections/Cart'
 import { plugins } from './plugins'
-import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
-import { Orders } from './collections/Orders'
-import { Customers } from './collections/Customers'
+import { placeOrder } from './endpoints/place-order'
+import { verifyPayment } from './endpoints/verify-payment'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -64,6 +65,18 @@ export default buildConfig({
       ],
     },
   },
+  endpoints: [
+    {
+      path: '/payment/place-order',
+      method: 'post',
+      handler: placeOrder,
+    },
+    {
+      path: '/payment/verify-payment',
+      method: 'post',
+      handler: verifyPayment,
+    },
+  ],
 
   // This config helps us configure global or default features that the other editors can inherit
   editor: defaultLexical,
@@ -111,14 +124,9 @@ export default buildConfig({
           ? JSON.parse(Buffer.from(process.env.GCS_CREDENTIALS_ENCRYPT, 'base64').toString('utf-8'))
           : {},
 
-        // credentials: JSON.parse(process.env.GCS_CREDENTIALS_ENCRYPT || '{}'), // Your service account key JSON
         projectId: process.env.GCS_PROJECT_ID, // Your Google Cloud Project ID
-        // apiEndpoint: 'https://www.googleapis.com', // Optional: for custom endpoints
       },
       acl: 'Public',
-      // clientUploads: true,
-      // acl: 'publicRead', // Optional: Set public access for uploaded files (be careful with this!)
-      // clientUploads: true, // Set to true for direct client-side uploads (important for Vercel/small server limits)
     }),
     // storage-adapter-placeholder
   ],

@@ -849,19 +849,56 @@ export interface Customer {
  */
 export interface Order {
   id: string;
-  user: string | User;
+  customer: string | Customer;
   items?:
     | {
-        product?: (string | null) | Product;
-        color?: string | null;
-        size?: string | null;
-        quantity?: number | null;
-        price?: number | null;
+        product: string | Product;
+        variant: string;
+        color: string;
+        quantity: number;
         id?: string | null;
       }[]
     | null;
+  /**
+   * Total amount of the order
+   */
   total: number;
+  /**
+   * Order status
+   */
   status?: ('pending' | 'paid' | 'shipped' | 'cancelled') | null;
+  /**
+   * Track current delivery status of the order
+   */
+  deliveryStatus?: ('not_shipped' | 'processing' | 'shipped' | 'out_for_delivery' | 'delivered' | 'returned') | null;
+  /**
+   * Razorpay order ID (created first)
+   */
+  razorpayOrderId?: string | null;
+  /**
+   * Razorpay payment ID (created after payment)
+   */
+  razorpayPaymentId?: string | null;
+  /**
+   * Payment status from Razorpay
+   */
+  paymentStatus?: ('created' | 'attempted' | 'paid' | 'failed' | 'refunded') | null;
+  /**
+   * Payment method used (card, upi, netbanking, etc.)
+   */
+  paymentMethod?: string | null;
+  /**
+   * Timestamp when payment was completed
+   */
+  paidAt?: string | null;
+  shippingAddress: {
+    name: string;
+    phone: string;
+    address: string;
+    city: string;
+    state: string;
+    pincode: string;
+  };
   updatedAt: string;
   createdAt: string;
 }
@@ -1471,19 +1508,34 @@ export interface CartSelect<T extends boolean = true> {
  * via the `definition` "orders_select".
  */
 export interface OrdersSelect<T extends boolean = true> {
-  user?: T;
+  customer?: T;
   items?:
     | T
     | {
         product?: T;
+        variant?: T;
         color?: T;
-        size?: T;
         quantity?: T;
-        price?: T;
         id?: T;
       };
   total?: T;
   status?: T;
+  deliveryStatus?: T;
+  razorpayOrderId?: T;
+  razorpayPaymentId?: T;
+  paymentStatus?: T;
+  paymentMethod?: T;
+  paidAt?: T;
+  shippingAddress?:
+    | T
+    | {
+        name?: T;
+        phone?: T;
+        address?: T;
+        city?: T;
+        state?: T;
+        pincode?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }
